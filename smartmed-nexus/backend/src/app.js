@@ -32,7 +32,7 @@ app.use('/api/medical-records', require('./routes/medicalRecordRoutes'));
 app.use('/api/emergency', require('./routes/emergencyRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
-app.all('*', (req, res) => {
+app.all('/{*path}', (req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });
 
