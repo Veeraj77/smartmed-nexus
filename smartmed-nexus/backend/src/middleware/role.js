@@ -1,11 +1,10 @@
-const { AppError } = require('./errorHandler');
-
 const authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return next(
-        new AppError(`Role '${req.user.role}' is not authorized to access this resource`, 403)
-      );
+      return res.status(403).json({
+        success: false,
+        message: `Role '${req.user.role}' is not authorized to access this resource`,
+      });
     }
     next();
   };

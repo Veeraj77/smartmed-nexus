@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const config = require('../config/index');
-const { AppError } = require('./errorHandler');
 
 const protect = async (req, res, next) => {
   try {
@@ -12,24 +11,24 @@ const protect = async (req, res, next) => {
     }
 
     if (!token) {
-      return next(new AppError('Not authorized. No token provided.', 401));
+      return res.status(401).json({ success: false, message: 'Not authorized. No token provided.' });
     }
 
     const decoded = jwt.verify(token, config.jwt.secret);
 
     const user = await User.findById(decoded.id);
     if (!user) {
-      return next(new AppError('User belonging to this token no longer exists.', 401));
+      return res.status(401).json({ success: false, message: 'User belonging to this token no longer exists.' });
     }
 
     if (!user.isActive) {
-      return next(new AppError('Account deactivated. Contact support.', 401));
+      return res.status(401).json({ success: false, message: 'Account deactivated. Contact support.' });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    return next(new AppError('Not authorized. Invalid token.', 401));
+    return res.status(401).json({ success: false, message: 'Not authorized. Invalid token.' });
   }
 };
 
