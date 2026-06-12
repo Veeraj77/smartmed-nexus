@@ -1,11 +1,12 @@
 const { validationResult } = require('express-validator');
-const { AppError } = require('./errorHandler');
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const messages = errors.array().map((e) => e.msg);
-    throw new AppError(messages.join(', '), 400);
+    return res.status(400).json({
+      success: false,
+      message: errors.array().map((e) => e.msg).join(', '),
+    });
   }
   next();
 };
